@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,13 +34,23 @@ public class MainActivity extends AppCompatActivity {
         try {
             InputStream ims = getAssets().open("sample_sprite.jpg");
             Bitmap bitmap = BitmapFactory.decodeStream(ims);
+            Mat mat = new Mat(bitmap.getWidth(), bitmap.getHeight(), CvType.CV_8UC4);
+            Utils.bitmapToMat(bitmap, mat);
+            Mat croppedMat = new Mat();
+            SampleMat(mat.getNativeObjAddr(), croppedMat.getNativeObjAddr());
+            Bitmap newBitmap = Bitmap.createBitmap(croppedMat.width(), croppedMat.height(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(croppedMat, newBitmap);
 
             ImageView image = (ImageView) findViewById(R.id.sample_image);
-            image.setImageBitmap(bitmap);
+            image.setImageBitmap(newBitmap);
+            mat.release();
+            croppedMat.release();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public native void SampleMat(long mat, long resultMat);
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
