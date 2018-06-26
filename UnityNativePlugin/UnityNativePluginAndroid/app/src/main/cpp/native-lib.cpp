@@ -1,24 +1,12 @@
 #include <jni.h>
 #include <string>
 
-// Link following functions C-style (required for plugins)
-extern "C"
-{
-// The functions we will call from Unity.
-const char* PrintHello() {
-    return "Hello";
-}
+extern "C" JNIEXPORT jstring
 
-int PrintANumber() {
-    return 5;
+JNICALL
+Java_kobayashi_taku_taptappun_net_unitynativepluginandroid_MainActivity_stringFromJNI(
+        JNIEnv *env,
+        jobject /* this */) {
+    std::string hello = "Hello from C++";
+    return env->NewStringUTF(hello.c_str());
 }
-
-int AddTwoIntegers(int a, int b) {
-    return a + b;
-}
-
-float AddTwoFloats(float a, float b) {
-    return a + b;
-}
-
-} // end of export C block
